@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}  
+{% block title %} Orders {% endblock title %}
+
+{% block content %}
+<div class="my-form container p-5 my-5 rounded border border-warning">
+    <h2 class="text-center">Orders</h2>
+    <hr>
+
+    {% if not request.user.is_authenticated %}
+        <h5 class="alert alert-warning">
+            You must be
+            <a href="{% url 'signin' %}" class="text-dark">logged in</a>
+        </h5>
+    {% else %}
+        {% if all_orders %}
+            {% if all_orders|length == 0 %}
+                <h5 class="alert alert-warning">
+                    No orders here!
+                    <a href="{% url 'products' %}" class="text-dark">All Products</a>
+                </h5>
+            {% else %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in all_orders %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td> <!-- Changed from customer to user -->
+                            <td>{{ order.order_date }}</td> <!-- Changed from date to order_date -->
+                            <td>{{ order.is_finished|yesno:"Finished,Pending" }}</td> <!-- Converted boolean status -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="total-price">
+                    <h4 class="text-end">Total Price: ${{ total_price }}</h4>
+                </div>
+            {% endif %}
+        {% else %}
+            <h5 class="alert alert-warning">
+                No orders here!
+                <a href="{% url 'products' %}" class="text-dark">All Products</a>
+            </h5>
+        {% endif %}
+    {% endif %}
+
+    <hr>
+</div>
+{% endblock content %}
